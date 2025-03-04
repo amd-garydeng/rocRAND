@@ -12,6 +12,7 @@ def runCompileCommand(platform, project, jobName, settings)
     String codeCovFlag = settings.codeCoverage ? '-DCODE_COVERAGE=ON' : ''
     String asanFlag = settings.addressSanitizer ? '-DBUILD_ADDRESS_SANITIZER=ON' : ''
     String cmake = platform.jenkinsLabel.contains('centos') ? 'cmake3' : 'cmake'
+    String cmakePrefixPath = '-DCMAKE_PREFIX_PATH="/opt/rocm;/opt/rocm/llvm;/opt/rocm/bin"'
     //Set CI node's gfx arch as target if PR, otherwise use default targets of the library
     String amdgpuTargets = env.BRANCH_NAME.startsWith('PR-') ? '-DAMDGPU_TARGETS=\$gfx_arch' : ''
 
@@ -26,7 +27,7 @@ def runCompileCommand(platform, project, jobName, settings)
                 mkdir -p build/${buildTypeDir} && cd build/${buildTypeDir}
                 # gfxTargetParser reads gfxarch and adds target features such as xnack
                 ${auxiliary.gfxTargetParser()}
-                ${cmake} --toolchain=toolchain-linux.cmake ${buildTypeArg} ${buildStatic} -DAMDGPU_TARGETS=gfx942:xnack+ ${codeCovFlag} ${asanFlag} -DBUILD_TEST=ON -DBUILD_BENCHMARK=ON ../..
+                ${cmake} --toolchain=toolchain-linux.cmake ${cmakePrefixPath} ${buildTypeArg} ${buildStatic} ${amdgpuTargets} ${codeCovFlag} ${asanFlag} -DBUILD_TEST=ON -DBUILD_BENCHMARK=ON ../..
                 make -j\$(nproc)
                 """
 

@@ -10,10 +10,10 @@ rocRAND documentation
 
 rocRAND provides functions that generate pseudo-random and quasi-random numbers. The rocRAND library is implemented in the `HIP <https://rocm.docs.amd.com/projects/HIP/en/latest/index.html>`_
 programming language and optimized for AMD's latest discrete GPUs. It is designed to run on top
-of AMD's `ROCm <https://rocm.docs.amd.com/en/latest/>`_, but it also works on CUDA-enabled GPUs.
+of AMD's `ROCm <https://rocm.docs.amd.com/en/latest/>`_, but it also works on NVIDIA CUDA-enabled GPUs.
 
 rocRAND includes a wrapper library called hipRAND, which you can use to easily port
-CUDA applications using the cuRAND library to the
+NVIDIA CUDA applications using the CUDA cuRAND library to the
 `HIP <https://rocm.docs.amd.com/projects/HIP/en/latest/index.html>`_ layer. In the
 `ROCm <https://rocm.docs.amd.com/en/latest/>`_ environment, hipRAND uses rocRAND.
 
@@ -31,12 +31,13 @@ The documentation is structured as follows:
   .. grid-item-card:: Conceptual
 
     * :ref:`programmers-guide`
-    * :ref:`data-type-support`
+
     * :ref:`curand-compatibility`
     * :ref:`dynamic-ordering-configuration`
 
   .. grid-item-card:: API reference
 
+    * :doc:`rocRAND data type support <api-reference/data-type-support>`
     * :ref:`cpp-api`
     * :ref:`python-api`
     * :doc:`Fortran API reference <fortran-api-reference>`

@@ -3,29 +3,77 @@
 Documentation for rocRAND is available at
 [https://rocm.docs.amd.com/projects/rocRAND/en/latest/](https://rocm.docs.amd.com/projects/rocRAND/en/latest/)
 
-## (Unreleased) rocRAND-3.2.0 for ROCm 6.3.0
+## (Unreleased) rocRAND 3.4.0 for ROCm 6.5
 
-### Additions
+### Added
+
+* gfx950 support
+
+### Changed
+
+* Updated several `gfx942` auto tuning parameters.
+* Deprecated C++14 and set the default target to C++17.
+* Directly accessing the (scrambled) sobol32 and sobol64 constants and direction vectors is deprecated:
+  * `h_scrambled_sobol32_constants`, use `rocrand_get_scramble_constants32` instead.
+  * `h_scrambled_sobol64_constants`, use `rocrand_get_scramble_constants64` instead.
+  * `rocrand_h_sobol32_direction_vectors`, use `rocrand_get_direction_vectors32` instead.
+  * `rocrand_h_sobol64_direction_vectors`, use `rocrand_get_direction_vectors64` instead.
+  * `rocrand_h_scrambled_sobol32_direction_vectors`, use `rocrand_get_direction_vectors32` instead.
+  * `rocrand_h_scrambled_sobol64_direction_vectors`, use `rocrand_get_direction_vectors64` instead.
+
+### Upcoming changes
+* C++14 will be removed in the next major release.
+* Directly accessing the (scrambled) sobol32 and sobol64 constants and direction vectors will be removed in the next major release.
+
+
+### Fixed
+
+* Fixed an issue where `mt19937.hpp` would cause kernel errors during auto tuning.
+
+## rocRAND 3.3.0 for ROCm 6.4
+
+### Added
+
+* Added extended tests to `rtest.py`. These tests are extra tests that did not fit the criteria of smoke and regression tests. These tests will take much longer to run relative to smoke and regression tests. Use `python rtest.py [--emulation|-e|--test|-t]=extended` to run these tests.
+* Added regression tests to `rtest.py`. These tests recreate scenarios that have caused hardware problems in past emulation environments. Use `python rtest.py [--emulation|-e|--test|-t]=regression` to run these tests.
+* Added smoke test options, which runs a subset of the unit tests and ensures that less than 2gb of VRAM will be used. Use `python rtest.py [--emulation|-e|--test|-t]=smoke` to run these tests.
+* Added `--emulation` option for `rtest.py`
+
+### Changed
+
+* Removed a section in `cmake/Dependencies.cmake` that was forcing `DCMAKE_CXX_COMPILER` to be set to either `cl` or `g++` if the compiler was not `GNU`.
+* `--test|-t` is no longer a required flag for `rtest.py`. Instead, the user can use either `--emulation|-e` or `--test|-t`, but not both.
+* Removed TBB dependency for multi-core processing of host-side generation.
+
+## Resolved issues
+
+* Fixed an issue where `CMAKE_PREFIX_PATH` was not defined properly in `CMAKELists.txt` and `toolchain-linux.cmake`.
+* Fixed an issue in `rmake.py` where `cmake_platform_opts` was sometimes a string instead of a list.
+
+## rocRAND 3.2.0 for ROCm 6.3.0
+
+### Added
 
 * Added host generator for MT19937
 * Support for `rocrand_generate_poisson` in hipGraphs
-* Added engine, distribution, mode, throughput_gigabytes_per_second, and lambda columns for csv format in 
-  benchmark_rocrand_host_api and benchmark_rocrand_device_api. To see these new columns set --benchmark_format=csv 
-  or --benchmark_out_format=csv --benchmark_out="outName.csv"
+* Added engine, distribution, mode, throughput_gigabytes_per_second, and lambda columns for the csv format in 
+  `benchmark_rocrand_host_api` and `benchmark_rocrand_device_api`. To see these new columns, set `--benchmark_format=csv` 
+  or `--benchmark_out_format=csv --benchmark_out="outName.csv"`.
 
-### Changes
+### Changed
 
+* Updated the default value for the `-a` argument from `rmake.py` to `gfx906:xnack-,gfx1030,gfx1100,gfx1101,gfx1102,gfx1151,gfx1200,gfx1201`.
 * `rocrand_discrete` for MTGP32, LFSR113 and ThreeFry generators now uses the alias method, which is faster than binary search in CDF.
 
-## (Unreleased) rocRAND-3.1.1 for ROCm 6.2.0
+## rocRAND 3.1.1 for ROCm 6.2.4
 
 ## Fixes
 
-* Fixed " unknown extension ?>" issue in scripts/config-tuning/select_best_config.py 
-  when using python version thats older than 3.11
+* Fixed an issue in `rmake.py` where the list storing cmake options would contain individual characters instead of a full string of options.
+* Fixed " unknown extension ?>" issue in scripts/config-tuning/select_best_config.py when using python version thats older than 3.11
 * Fixed low random sequence quality of `ROCRAND_RNG_PSEUDO_THREEFRY2_64_20` and `ROCRAND_RNG_PSEUDO_THREEFRY4_64_20`.
 
-## (Unreleased) rocRAND-3.1.0 for ROCm 6.2.0
+## rocRAND 3.1.0 for ROCm 6.2.0
 
 ### Additions
 
@@ -47,7 +95,7 @@ Documentation for rocRAND is available at
     * If TBB is not found when configuring rocRAND, the configuration is still successful, and the host generators are executed on a single CPU thread.
 * Added the option to create a host generator to the Python wrapper
 * Added the option to create a host generator to the Fortran wrapper
-* Added dynamic ordering. This ordering is free to rearrange the produced numbers, 
+* Added dynamic ordering. This ordering is free to rearrange the produced numbers,
   which can be specific to devices and distributions. It is implemented for:
   * XORWOW, MRG32K3A, MTGP32, Philox 4x32-10, MRG31K3P, LFSR113, and ThreeFry
 * For the NVIDIA platform compilation using clang as the host compiler is now supported.
@@ -66,7 +114,7 @@ Documentation for rocRAND is available at
 
 ### Changes
 
-* For device-side generators, you can now wrap calls to rocrand_generate_* inside of a hipGraph. There are a few 
+* For device-side generators, you can now wrap calls to rocrand_generate_* inside of a hipGraph. There are a few
   things to be aware of:
   - Generator creation (rocrand_create_generator), initialization (rocrand_initialize_generator), and destruction (rocrand_destroy_generator) must still happen outside the hipGraph.
   - After the generator is created, you may call API functions to set its seed, offset, and order.
@@ -99,7 +147,7 @@ Documentation for rocRAND is available at
 ### Known issues
 - SOBOL64 and SCRAMBLED_SOBOL64 generate poisson-distributed `unsigned long long int` numbers instead of `unsigned int`. This will be fixed in the next major release.
 
-## (Unreleased) rocRAND-3.0.0 for ROCm 6.0.0
+## rocRAND-3.0.0 for ROCm 6.0.0
 
 ### Additions
 
