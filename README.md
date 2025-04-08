@@ -13,7 +13,7 @@ Prior to ROCm version 5.0, this project included the
 split into a separate library. As of version 6.0, hipRAND can no longer be built from rocRAND.
 
 
-## Changes MI300 Broadcom Orion 
+## Changess MI300 Broadcom Orion 
 ## Supported random number generators
 
 * XORWOW
