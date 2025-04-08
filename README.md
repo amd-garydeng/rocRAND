@@ -12,6 +12,8 @@ Prior to ROCm version 5.0, this project included the
 [hipRAND](https://github.com/ROCm/hipRAND.git) wrapper. As of version 5.0, it was
 split into a separate library. As of version 6.0, hipRAND can no longer be built from rocRAND.
 
+
+## Change
 ## Supported random number generators
 
 * XORWOW
